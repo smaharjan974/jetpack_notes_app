@@ -10,9 +10,11 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.google.gson.Gson
 import com.sundev.testnotes.addNote.AddNoteScreen
 import com.sundev.testnotes.home.HomeScreen
@@ -36,27 +38,25 @@ class MainActivity : ComponentActivity() {
 
                     NavHost(navController = navController, startDestination = Routes.HOME) {
                         composable(Routes.HOME) {
-                            val newNoteJsonStr =
-                                navController.currentBackStackEntry?.savedStateHandle?.getStateFlow(
-                                    "new_note",
-                                    ""
-                                )?.collectAsState()
+
                             HomeScreen(
-                                newNote = newNoteJsonStr?.value,
                                 navigateNext = { route ->
                                     navController.navigate(route)
                                 }
                             )
                         }
 
-                        composable(Routes.ADD_NOTE) {
+                        composable(
+                            route = Routes.ADD_NOTE + "/{id}",
+                            arguments = listOf(
+                                navArgument("id"){
+                                    this.type = NavType.IntType
+                                    this.defaultValue = -1
+                                }
+                            )
+                        ) {
                             AddNoteScreen(
-                                navigateBack = { newNote ->
-                                    val jsonStr = Gson().toJson(newNote)
-                                    navController.previousBackStackEntry?.savedStateHandle?.set(
-                                        "new_note",
-                                        jsonStr
-                                    )
+                                navigateBack = {
                                     navController.popBackStack()
                                 }
                             )

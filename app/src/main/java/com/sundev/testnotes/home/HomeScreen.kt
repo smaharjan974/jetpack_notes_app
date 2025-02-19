@@ -35,6 +35,7 @@ import com.sundev.testnotes.R
 import com.sundev.testnotes.Routes
 import com.sundev.testnotes.models.NoteModel
 import com.sundev.testnotes.ui.theme.TestNotesTheme
+import kotlinx.coroutines.flow.collectLatest
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
@@ -42,15 +43,16 @@ import com.sundev.testnotes.ui.theme.TestNotesTheme
 fun HomeScreen(
     viewModel: HomeViewModel = viewModel(),
     navigateNext: (String) -> Unit,
-    newNote: String? = null
 ) {
 
-    val notes = viewModel.notes
+    val notes = viewModel.noteList
 
-    LaunchedEffect(key1 = newNote) {
-        if (newNote.isNullOrEmpty()) return@LaunchedEffect
-        val newNoteObj = Gson().fromJson(newNote, NoteModel::class.java)
-        viewModel.saveNote(newNoteObj)
+    LaunchedEffect(key1 = true,){
+        viewModel.eventFlow.collectLatest { event ->
+            when(event){
+                is HomeViewModel.HomeEvent.NavigateNext -> navigateNext(event.route)
+            }
+        }
     }
 
     Scaffold(
@@ -72,7 +74,7 @@ fun HomeScreen(
         floatingActionButton = {
             FloatingActionButton(
                 onClick = {
-                    val route = Routes.ADD_NOTE
+                    val route = Routes.ADD_NOTE+"/-1"
                     navigateNext(route)
                 },
                 containerColor = MaterialTheme.colorScheme.tertiary

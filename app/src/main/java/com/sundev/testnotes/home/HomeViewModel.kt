@@ -3,29 +3,57 @@ package com.sundev.testnotes.home
 import android.util.Log
 import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.sundev.testnotes.Routes
 import com.sundev.testnotes.models.NoteModel
-import com.sundev.testnotes.models.dummyNotes
+import com.sundev.testnotes.repository.NotesRepository
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.launch
 
 class HomeViewModel : ViewModel() {
-    
+
     private val TAG = "HomeViewModel"
 
-    val notes = mutableStateListOf<NoteModel>().apply {
-        addAll(dummyNotes())
+    private val _repository: NotesRepository = NotesRepository.getInstance()
+
+    val noteList = mutableStateListOf<NoteModel>()
+
+    private val _eventFlow = MutableSharedFlow<HomeEvent>()
+    val eventFlow: SharedFlow<HomeEvent> = _eventFlow.asSharedFlow()
+    private val _scope = viewModelScope
+
+    init {
+        val items = _repository.getAll()
+        noteList.addAll(items)
+
+        _scope.launch {
+            _repository.newNoteInsertionListener.collect { newNote ->
+                noteList.add(newNote)
+            }
+        }
+
+        _scope.launch {
+            _repository.updateNoteInsertionListener.collect { updatedNote ->
+                val itemIndex = noteList.indexOfFirst { it.id == updatedNote.id }
+                if (itemIndex != -1)
+                    noteList[itemIndex] = updatedNote
+            }
+        }
     }
 
 
-    fun listItemOnClick(id: Int){
+    fun listItemOnClick(id: Int) = _scope.launch(Dispatchers.Main) {
         Log.d(TAG, "listItemOnClick: $id")
-    }
-    
-    fun addNewNote() {
-        Log.d(TAG, "addNewNote: ")
+        val route = Routes.ADD_NOTE + "/$id"
+        _eventFlow.emit(HomeEvent.NavigateNext(route))
     }
 
-    fun saveNote(newNoteObj: NoteModel){
-        Log.d(TAG, "saveNote: $newNoteObj")
-        notes.add(newNoteObj)
+    sealed class HomeEvent {
+        data class NavigateNext(val route: String) : HomeEvent()
     }
 
 }
