@@ -22,8 +22,12 @@ class NotesRepository private constructor(){
     val newNoteInsertionListener: SharedFlow<NoteModel> = _newNoteInsertionListener.asSharedFlow()
 
 
-    private val _updateNoteInsertionListener = MutableSharedFlow<NoteModel>()
-    val updateNoteInsertionListener: SharedFlow<NoteModel> = _updateNoteInsertionListener.asSharedFlow()
+    private val _updateNoteListener = MutableSharedFlow<NoteModel>()
+    val updateNoteListener: SharedFlow<NoteModel> = _updateNoteListener.asSharedFlow()
+
+
+    private val _deleteNoteListener = MutableSharedFlow<Int>()
+    val deleteNoteListener: SharedFlow<Int> = _deleteNoteListener.asSharedFlow()
 
 
     private val items = arrayListOf<NoteModel>().apply {
@@ -50,6 +54,14 @@ class NotesRepository private constructor(){
     suspend fun update(item: NoteModel){
         val itemIndex = items.indexOfFirst { it.id == item.id }
         items[itemIndex] = item
-        _updateNoteInsertionListener.emit(item)
+        _updateNoteListener.emit(item)
+    }
+
+    suspend fun delete(itemId: Int){
+        val itemIndex = items.indexOfFirst { it.id == itemId }
+        if(itemIndex != -1){
+            items.removeAt(itemIndex)
+        }
+        _deleteNoteListener.emit(itemId)
     }
 }

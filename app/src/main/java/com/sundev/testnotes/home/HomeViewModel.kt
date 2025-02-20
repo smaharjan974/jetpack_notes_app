@@ -37,10 +37,19 @@ class HomeViewModel : ViewModel() {
         }
 
         _scope.launch {
-            _repository.updateNoteInsertionListener.collect { updatedNote ->
+            _repository.updateNoteListener.collect { updatedNote ->
                 val itemIndex = noteList.indexOfFirst { it.id == updatedNote.id }
                 if (itemIndex != -1)
                     noteList[itemIndex] = updatedNote
+            }
+        }
+
+        _scope.launch {
+            _repository.deleteNoteListener.collect { id ->
+               val itemIndex = noteList.indexOfFirst { it.id == id }
+                if(itemIndex != -1){
+                    noteList.removeAt(itemIndex)
+                }
             }
         }
     }

@@ -30,6 +30,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.sundev.testnotes.R
+import com.sundev.testnotes.addNote.components.ConfirmationDialog
 import com.sundev.testnotes.models.NoteModel
 import com.sundev.testnotes.ui.theme.TestNotesTheme
 import kotlinx.coroutines.flow.collectLatest
@@ -43,6 +44,7 @@ fun AddNoteScreen(
 
     val title = viewModel.title.collectAsState()
     val description = viewModel.description.collectAsState()
+    val showConfirmationDialog = viewModel.showConfirmationDialog.collectAsState()
 
     LaunchedEffect(key1 = true, block = {
         viewModel.event.collectLatest { event ->
@@ -74,7 +76,8 @@ fun AddNoteScreen(
                 tint = Color.White
             )
             Icon(
-                modifier = Modifier.size(20.dp),
+                modifier = Modifier.size(20.dp)
+                    .clickable { viewModel.showConfirmationDialog() },
                 painter = painterResource(id = R.drawable.baseline_delete_24),
                 contentDescription = null,
                 tint = Color.White
@@ -104,6 +107,14 @@ fun AddNoteScreen(
         )
 
 
+    }
+
+    if (showConfirmationDialog.value) {
+        ConfirmationDialog(dismissButton = {
+            viewModel.hideConfirmationDialog()
+        }, confirmButton = {
+            viewModel.deleteNote()
+        })
     }
 }
 
