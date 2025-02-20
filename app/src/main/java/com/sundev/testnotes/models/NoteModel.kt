@@ -1,10 +1,20 @@
 package com.sundev.testnotes.models
 
+import com.sundev.testnotes.data.local.NoteEntity
+
 data class NoteModel(
     val id: Int,
     val title: String,
     val description: String
 )
+
+fun NoteModel.toEntity(): NoteEntity {
+    return NoteEntity(
+        id = if (id == -1) null else id,
+        title = title,
+        description = description
+    )
+}
 
 fun dummyNotes(): List<NoteModel> {
 //    return listOf(
@@ -20,8 +30,8 @@ fun dummyNotes(): List<NoteModel> {
 //    )
 
     val items = arrayListOf<NoteModel>()
-    for(i in 1..3){
-        items.add(NoteModel(i,"Title $i","Descrption $i"))
+    for (i in 1..3) {
+        items.add(NoteModel(i, "Title $i", "Descrption $i"))
     }
     return items
 }

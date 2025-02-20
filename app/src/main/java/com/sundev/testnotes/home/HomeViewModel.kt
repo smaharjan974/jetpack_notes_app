@@ -8,6 +8,7 @@ import com.sundev.testnotes.Routes
 import com.sundev.testnotes.models.NoteModel
 import com.sundev.testnotes.repository.NotesRepository
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -27,8 +28,12 @@ class HomeViewModel : ViewModel() {
     private val _scope = viewModelScope
 
     init {
-        val items = _repository.getAll()
-        noteList.addAll(items)
+        _scope.launch(Dispatchers.IO) {
+            delay(1000L)
+            val items = _repository.getAll()
+            noteList.addAll(items)
+        }
+
 
         _scope.launch {
             _repository.newNoteInsertionListener.collect { newNote ->

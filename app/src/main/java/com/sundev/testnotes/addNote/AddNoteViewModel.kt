@@ -33,13 +33,15 @@ class AddNoteViewModel(
     val showConfirmationDialog = _shoConfirmationDialog.asStateFlow()
 
     init {
-        val noteId = savedStateHandle
-            .get<Int>("id") ?: -1
-        _noteId = noteId
-        if(noteId != -1){
-            val note = repository.get(noteId)
-            _title.value = note.title
-            _description.value = note.description
+        viewModelScope.launch(Dispatchers.IO) {
+            val noteId = savedStateHandle
+                .get<Int>("id") ?: -1
+            _noteId = noteId
+            if(noteId != -1){
+                val note = repository.get(noteId)
+                _title.value = note.title
+                _description.value = note.description
+            }
         }
 
     }
@@ -53,15 +55,15 @@ class AddNoteViewModel(
     }
 
     fun backIconOnClick() = viewModelScope.launch(Dispatchers.IO){
-        val noteModel = NoteModel(id = _noteId, title = _title.value, description = _description.value)
-        val isNoteEmpty = noteModel.let {
-            it.title.isEmpty() && it.description.isEmpty()
-        }
-        if(isNoteEmpty) return@launch
-        // saveNote
-        if(noteModel.id == -1){
+        val noteModel = NoteModel(
+            id = _noteId,
+            title = _title.value,
+            description = _description.value,
+        )
+        // Save Note
+        if (noteModel.id == -1) {
             repository.insert(noteModel)
-        }else{
+        } else {
             repository.update(noteModel)
         }
 
@@ -69,7 +71,6 @@ class AddNoteViewModel(
         viewModelScope.launch(Dispatchers.Main) {
             _event.emit(Event.NavigateBack)
         }
-
     }
 
     fun hideConfirmationDialog(){
@@ -80,7 +81,7 @@ class AddNoteViewModel(
         _shoConfirmationDialog.value = true
     }
 
-    fun deleteNote() = viewModelScope.launch {
+    fun deleteNote() = viewModelScope.launch(Dispatchers.IO) {
         val itemId = _noteId
         repository.delete(itemId)
 
