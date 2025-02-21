@@ -1,8 +1,8 @@
-package com.sundev.testnotes.data.local
+package com.sundev.testnotes.core.data.local
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.sundev.testnotes.models.NoteModel
+import com.sundev.testnotes.core.domain.models.NoteModel
 
 @Entity(tableName = "notes")
 data class NoteEntity(
@@ -11,7 +11,7 @@ data class NoteEntity(
     val description: String?
 )
 
-fun NoteEntity.toModel() : NoteModel{
+fun NoteEntity.toModel() : NoteModel {
     return NoteModel(
         id = this.id ?: -1,
         title = this.title ?: "",

@@ -1,4 +1,4 @@
-package com.sundev.testnotes.data.local
+package com.sundev.testnotes.core.data.local
 
 import androidx.room.Dao
 import androidx.room.Delete

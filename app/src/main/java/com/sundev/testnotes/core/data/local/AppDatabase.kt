@@ -1,4 +1,4 @@
-package com.sundev.testnotes.data.local
+package com.sundev.testnotes.core.data.local
 
 import androidx.room.Database
 import androidx.room.Room

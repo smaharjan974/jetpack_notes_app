@@ -1,4 +1,4 @@
-package com.sundev.testnotes.home
+package com.sundev.testnotes.feature_home.presentation
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.background
@@ -30,10 +30,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.google.gson.Gson
 import com.sundev.testnotes.R
 import com.sundev.testnotes.Routes
-import com.sundev.testnotes.models.NoteModel
 import com.sundev.testnotes.ui.theme.TestNotesTheme
 import kotlinx.coroutines.flow.collectLatest
 

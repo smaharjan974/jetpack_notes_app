@@ -1,6 +1,5 @@
-package com.sundev.testnotes.addNote
+package com.sundev.testnotes.feature_addNote.presentation
 
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -30,8 +29,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.sundev.testnotes.R
-import com.sundev.testnotes.addNote.components.ConfirmationDialog
-import com.sundev.testnotes.models.NoteModel
+import com.sundev.testnotes.feature_addNote.presentation.components.ConfirmationDialog
 import com.sundev.testnotes.ui.theme.TestNotesTheme
 import kotlinx.coroutines.flow.collectLatest
 

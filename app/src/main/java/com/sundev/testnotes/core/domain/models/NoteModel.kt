@@ -1,6 +1,6 @@
-package com.sundev.testnotes.models
+package com.sundev.testnotes.core.domain.models
 
-import com.sundev.testnotes.data.local.NoteEntity
+import com.sundev.testnotes.core.data.local.NoteEntity
 
 data class NoteModel(
     val id: Int,
