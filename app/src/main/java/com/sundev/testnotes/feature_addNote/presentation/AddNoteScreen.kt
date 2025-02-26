@@ -47,7 +47,7 @@ fun AddNoteScreen(
     LaunchedEffect(key1 = true, block = {
         viewModel.event.collectLatest { event ->
             when (event) {
-                is AddNoteViewModel.Event.NavigateBack -> navigateBack()
+                is AddNoteEvent.NavigateBack -> navigateBack()
             }
         }
     }
@@ -68,14 +68,14 @@ fun AddNoteScreen(
             Icon(
                 modifier = Modifier
                     .size(20.dp)
-                    .clickable { viewModel.backIconOnClick() },
+                    .clickable { viewModel.action(AddNoteAction.BackIconOnClick) },
                 painter = painterResource(id = R.drawable.baseline_arrow_back_24),
                 contentDescription = null,
                 tint = Color.White
             )
             Icon(
                 modifier = Modifier.size(20.dp)
-                    .clickable { viewModel.showConfirmationDialog() },
+                    .clickable { viewModel.action(AddNoteAction.ShowConfirmationDialog) },
                 painter = painterResource(id = R.drawable.baseline_delete_24),
                 contentDescription = null,
                 tint = Color.White
@@ -84,7 +84,7 @@ fun AddNoteScreen(
 
         TextField(
             value = title.value,
-            onValueChange = { viewModel.titleOnValueChange(it) },
+            onValueChange = { viewModel.action(AddNoteAction.TitleOnValueChange(it)) },
             modifier = Modifier.fillMaxWidth(),
             placeholder = {
                 Text(text = "Enter title")
@@ -95,7 +95,7 @@ fun AddNoteScreen(
         )
 
         TextField(
-            value = description.value, onValueChange = { viewModel.descriptionOnValueChange(it) },
+            value = description.value, onValueChange = { viewModel.action(AddNoteAction.DescriptionOnValueChange(it)) },
             modifier = Modifier
                 .fillMaxWidth()
                 .weight(1f),
@@ -109,9 +109,9 @@ fun AddNoteScreen(
 
     if (showConfirmationDialog.value) {
         ConfirmationDialog(dismissButton = {
-            viewModel.hideConfirmationDialog()
+            viewModel.action(AddNoteAction.HideConfirmationDialog)
         }, confirmButton = {
-            viewModel.deleteNote()
+            viewModel.action(AddNoteAction.DeleteNote)
         })
     }
 }

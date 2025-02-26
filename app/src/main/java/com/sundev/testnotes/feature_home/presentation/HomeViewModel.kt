@@ -56,15 +56,21 @@ class HomeViewModel : ViewModel() {
         }
     }
 
+    fun action(action: HomeAction){
+        when(action){
+            HomeAction.AddNewNote -> addNewNote()
+            is HomeAction.ListItemOnClick -> listItemOnClick(action.value)
+        }
+    }
 
-    fun listItemOnClick(id: Int) = _scope.launch(Dispatchers.Main) {
+    private fun addNewNote() = _scope.launch{
+        val route = Routes.ADD_NOTE+"/-1"
+        _eventFlow.emit(HomeEvent.NavigateNext(route))
+    }
+
+    private fun listItemOnClick(id: Int) = _scope.launch(Dispatchers.Main) {
         Log.d(TAG, "listItemOnClick: $id")
         val route = Routes.ADD_NOTE + "/$id"
         _eventFlow.emit(HomeEvent.NavigateNext(route))
     }
-
-    sealed class HomeEvent {
-        data class NavigateNext(val route: String) : HomeEvent()
-    }
-
 }
