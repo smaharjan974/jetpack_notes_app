@@ -27,6 +27,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.sundev.testnotes.R
 import com.sundev.testnotes.feature_addNote.presentation.components.ConfirmationDialog
@@ -36,7 +37,7 @@ import kotlinx.coroutines.flow.collectLatest
 @ExperimentalMaterial3Api
 @Composable
 fun AddNoteScreen(
-    viewModel: AddNoteViewModel = viewModel(),
+    viewModel: AddNoteViewModel = hiltViewModel(),
     navigateBack: () -> Unit
 ) {
 
@@ -74,7 +75,8 @@ fun AddNoteScreen(
                 tint = Color.White
             )
             Icon(
-                modifier = Modifier.size(20.dp)
+                modifier = Modifier
+                    .size(20.dp)
                     .clickable { viewModel.action(AddNoteAction.ShowConfirmationDialog) },
                 painter = painterResource(id = R.drawable.baseline_delete_24),
                 contentDescription = null,

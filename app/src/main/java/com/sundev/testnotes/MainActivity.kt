@@ -16,7 +16,10 @@ import androidx.navigation.navArgument
 import com.sundev.testnotes.feature_addNote.presentation.AddNoteScreen
 import com.sundev.testnotes.feature_home.presentation.HomeScreen
 import com.sundev.testnotes.ui.theme.TestNotesTheme
+import dagger.hilt.android.AndroidEntryPoint
 
+
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
     private val TAG = "MainActivity"

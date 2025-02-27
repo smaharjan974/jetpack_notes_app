@@ -7,6 +7,7 @@ import com.sundev.testnotes.feature_addNote.domain.AddNoteUseCase
 import com.sundev.testnotes.feature_addNote.domain.DeleteNoteUseCase
 import com.sundev.testnotes.feature_addNote.domain.GetNoteUseCase
 import com.sundev.testnotes.core.domain.models.NoteModel
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -14,14 +15,15 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class AddNoteViewModel(
-    private val savedStateHandle: SavedStateHandle
+@HiltViewModel
+class AddNoteViewModel @Inject constructor(
+    private val savedStateHandle: SavedStateHandle,
+    private val _addNoteUseCase: AddNoteUseCase,
+    private val _deleteNoteUseCase: DeleteNoteUseCase,
+    private val _getNoteUseCase: GetNoteUseCase,
 ) : ViewModel() {
-
-    private val _addNoteUseCase: AddNoteUseCase = AddNoteUseCase.getInstance()
-    private val _deleteNoteUseCase: DeleteNoteUseCase = DeleteNoteUseCase.getInstance()
-    private val _getNoteUseCase: GetNoteUseCase = GetNoteUseCase.getInstance()
 
     private var _title: MutableStateFlow<String> = MutableStateFlow<String>("")
     private var _description: MutableStateFlow<String> = MutableStateFlow<String>("")
@@ -41,7 +43,7 @@ class AddNoteViewModel(
             val noteId = savedStateHandle
                 .get<Int>("id") ?: -1
             _noteId = noteId
-            if(noteId != -1){
+            if (noteId != -1) {
                 val note = _getNoteUseCase.execute(noteId)
                 _title.value = note.title
                 _description.value = note.description
@@ -50,8 +52,8 @@ class AddNoteViewModel(
 
     }
 
-    fun action(action: AddNoteAction){
-        when(action){
+    fun action(action: AddNoteAction) {
+        when (action) {
             AddNoteAction.BackIconOnClick -> backIconOnClick()
             AddNoteAction.DeleteNote -> deleteNote()
             is AddNoteAction.DescriptionOnValueChange -> descriptionOnValueChange(action.value)
@@ -61,15 +63,15 @@ class AddNoteViewModel(
         }
     }
 
-    private fun titleOnValueChange(value: String){
+    private fun titleOnValueChange(value: String) {
         _title.value = value
     }
 
-    private fun descriptionOnValueChange(value: String){
+    private fun descriptionOnValueChange(value: String) {
         _description.value = value
     }
 
-    private fun backIconOnClick() = viewModelScope.launch(Dispatchers.IO){
+    private fun backIconOnClick() = viewModelScope.launch(Dispatchers.IO) {
         val noteModel = NoteModel(
             id = _noteId,
             title = _title.value,
@@ -84,11 +86,11 @@ class AddNoteViewModel(
         }
     }
 
-    private fun hideConfirmationDialog(){
+    private fun hideConfirmationDialog() {
         _shoConfirmationDialog.value = false
     }
 
-    private fun showConfirmationDialog(){
+    private fun showConfirmationDialog() {
         _shoConfirmationDialog.value = true
     }
 

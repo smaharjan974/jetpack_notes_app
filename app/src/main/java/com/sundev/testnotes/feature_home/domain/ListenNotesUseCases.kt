@@ -1,16 +1,17 @@
 package com.sundev.testnotes.feature_home.domain
 
 import com.sundev.testnotes.core.domain.models.NoteModel
-import com.sundev.testnotes.core.data.repository.NotesRepositoryImpl
+import com.sundev.testnotes.core.domain.repository.NotesRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.channelFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class ListenNotesUseCases {
+class ListenNotesUseCases constructor(
+    private val repository: NotesRepository
+) {
 
-    private val repository: NotesRepositoryImpl = NotesRepositoryImpl.getInstance()
 
     suspend fun execute(): Flow<NotesEvent> {
         return channelFlow {
@@ -38,17 +39,6 @@ class ListenNotesUseCases {
         }
 
     }
-
-    companion object {
-        private var _instance: ListenNotesUseCases? = null
-
-        fun getInstance(): ListenNotesUseCases {
-            if (_instance == null)
-                _instance = ListenNotesUseCases()
-            return _instance!!
-        }
-    }
-
 }
 
 sealed interface NotesEvent {

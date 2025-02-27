@@ -9,19 +9,23 @@ import com.sundev.testnotes.feature_home.domain.GetNotesUseCase
 import com.sundev.testnotes.feature_home.domain.ListenNotesUseCases
 import com.sundev.testnotes.feature_home.domain.NotesEvent
 import com.sundev.testnotes.core.domain.models.NoteModel
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class HomeViewModel : ViewModel() {
+@HiltViewModel
+class HomeViewModel @Inject constructor(
+    private val getNotesUseCase: GetNotesUseCase,
+    private val listenNotesUseCases: ListenNotesUseCases
+) : ViewModel() {
 
     private val TAG = "HomeViewModel"
 
-    private val getNotesUseCase: GetNotesUseCase = GetNotesUseCase.getInstance()
-    private val listenNotesUseCases: ListenNotesUseCases = ListenNotesUseCases.getInstance()
 
     val noteList = mutableStateListOf<NoteModel>()
 
@@ -38,14 +42,15 @@ class HomeViewModel : ViewModel() {
 
         _scope.launch(Dispatchers.IO) {
             listenNotesUseCases.execute().collect { event ->
-                when(event){
+                when (event) {
                     is NotesEvent.Delete -> {
                         val itemIndex = noteList.indexOfFirst { it.id == event.value }
-                        if(itemIndex != -1){
+                        if (itemIndex != -1) {
                             noteList.removeAt(itemIndex)
                         }
                     }
-                    is NotesEvent.Insert -> noteList.add(0,event.value)
+
+                    is NotesEvent.Insert -> noteList.add(0, event.value)
                     is NotesEvent.Update -> {
                         val itemIndex = noteList.indexOfFirst { it.id == event.value.id }
                         if (itemIndex != -1)
@@ -56,15 +61,15 @@ class HomeViewModel : ViewModel() {
         }
     }
 
-    fun action(action: HomeAction){
-        when(action){
+    fun action(action: HomeAction) {
+        when (action) {
             HomeAction.AddNewNote -> addNewNote()
             is HomeAction.ListItemOnClick -> listItemOnClick(action.value)
         }
     }
 
-    private fun addNewNote() = _scope.launch{
-        val route = Routes.ADD_NOTE+"/-1"
+    private fun addNewNote() = _scope.launch {
+        val route = Routes.ADD_NOTE + "/-1"
         _eventFlow.emit(HomeEvent.NavigateNext(route))
     }
 

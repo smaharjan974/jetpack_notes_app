@@ -11,22 +11,13 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 
-class NotesRepositoryImpl private constructor() : NotesRepository {
-
-    val dao: NotesDao = AppDatabase.getInstance().notesDao()
-
-    companion object {
-        private var _instance: NotesRepositoryImpl? = null
-
-        fun getInstance(): NotesRepositoryImpl {
-            if (_instance == null)
-                _instance = NotesRepositoryImpl()
-            return _instance as NotesRepositoryImpl
-        }
-    }
+class NotesRepositoryImpl constructor(
+    private val dao: NotesDao
+) : NotesRepository {
 
     private val _newNoteInsertionListener = MutableSharedFlow<NoteModel>()
-    override val newNoteInsertionListener: SharedFlow<NoteModel> = _newNoteInsertionListener.asSharedFlow()
+    override val newNoteInsertionListener: SharedFlow<NoteModel> =
+        _newNoteInsertionListener.asSharedFlow()
 
 
     private val _updateNoteListener = MutableSharedFlow<NoteModel>()
@@ -37,8 +28,8 @@ class NotesRepositoryImpl private constructor() : NotesRepository {
     override val deleteNoteListener: SharedFlow<Int> = _deleteNoteListener.asSharedFlow()
 
 
-    override suspend fun getAll(): List<NoteEntity> {
-        return dao.getAll()
+    override suspend fun getAll(): List<NoteModel> {
+        return dao.getAll().map { it.toModel() }
     }
 
     override suspend fun get(id: Int): NoteModel {

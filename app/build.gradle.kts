@@ -2,6 +2,8 @@ plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
     id("com.google.devtools.ksp")
+    id("kotlin-kapt")
+    id("com.google.dagger.hilt.android")
 }
 
 android {
@@ -73,6 +75,11 @@ dependencies {
     ksp("androidx.room:room-compiler:$room_version")
     implementation("androidx.room:room-ktx:$room_version")
 
+    val dagger_version = "2.51.1"
+    implementation("com.google.dagger:hilt-android:$dagger_version")
+    kapt("com.google.dagger:hilt-compiler:$dagger_version")
+    implementation("androidx.hilt:hilt-navigation-compose:1.2.0")
+
 
 
     testImplementation("junit:junit:4.13.2")
@@ -82,4 +89,9 @@ dependencies {
     androidTestImplementation("androidx.compose.ui:ui-test-junit4")
     debugImplementation("androidx.compose.ui:ui-tooling")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
+}
+
+// Allow references to generated code
+kapt {
+    correctErrorTypes = true
 }
