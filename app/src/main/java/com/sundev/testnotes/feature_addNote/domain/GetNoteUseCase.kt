@@ -11,7 +11,7 @@ class GetNoteUseCase(
     private val repository: NotesRepository
 ) {
 
-    suspend fun execute(id: Int): NoteModel {
+    suspend fun execute(id: Int): NoteModel? {
         return withContext(Dispatchers.IO) {
             repository.get(id)
         }

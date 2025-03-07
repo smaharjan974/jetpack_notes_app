@@ -3,6 +3,7 @@ package com.sundev.testnotes.core.data.local
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
+import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
 
@@ -13,9 +14,9 @@ interface NotesDao {
     fun getAll(): List<NoteEntity>
 
     @Query("SELECT * FROM notes WHERE id = :id")
-    fun get(id: Int): NoteEntity
+    fun get(id: Int): NoteEntity?
 
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertItem(item: NoteEntity):Long
 
     @Update

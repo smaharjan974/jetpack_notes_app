@@ -44,7 +44,7 @@ class AddNoteViewModel @Inject constructor(
                 .get<Int>("id") ?: -1
             _noteId = noteId
             if (noteId != -1) {
-                val note = _getNoteUseCase.execute(noteId)
+                val note = _getNoteUseCase.execute(noteId) ?: return@launch
                 _title.value = note.title
                 _description.value = note.description
             }
