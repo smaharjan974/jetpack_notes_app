@@ -7,8 +7,6 @@ import com.sundev.testnotes.core.data.local.NoteEntity
 import com.sundev.testnotes.core.data.local.toModel
 import com.sundev.testnotes.core.data.repository.NotesRepositoryImpl
 import com.sundev.testnotes.core.domain.models.NoteModel
-import com.sundev.testnotes.feature_addNote.domain.GetNoteUseCase
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
@@ -16,7 +14,6 @@ import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import org.junit.jupiter.api.Assertions.*
 
 private val note1 = NoteEntity(1, "Note 1", "My first note")
 private val note2 = NoteEntity(2, "Note 2", "My Second note")

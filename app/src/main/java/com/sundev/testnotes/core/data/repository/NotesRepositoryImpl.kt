@@ -1,7 +1,5 @@
 package com.sundev.testnotes.core.data.repository
 
-import com.sundev.testnotes.core.data.local.AppDatabase
-import com.sundev.testnotes.core.data.local.NoteEntity
 import com.sundev.testnotes.core.data.local.NotesDao
 import com.sundev.testnotes.core.data.local.toModel
 import com.sundev.testnotes.core.domain.models.NoteModel

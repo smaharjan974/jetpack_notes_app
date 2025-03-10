@@ -1,6 +1,5 @@
 package com.sundev.testnotes.core.domain.repository
 
-import com.sundev.testnotes.core.data.local.NoteEntity
 import com.sundev.testnotes.core.domain.models.NoteModel
 import kotlinx.coroutines.flow.SharedFlow
 
