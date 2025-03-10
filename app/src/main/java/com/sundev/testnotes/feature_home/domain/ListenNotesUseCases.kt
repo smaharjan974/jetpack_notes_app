@@ -2,6 +2,7 @@ package com.sundev.testnotes.feature_home.domain
 
 import com.sundev.testnotes.core.domain.models.NoteModel
 import com.sundev.testnotes.core.domain.repository.NotesRepository
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.channelFlow
@@ -9,13 +10,14 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class ListenNotesUseCases constructor(
-    private val repository: NotesRepository
+    private val repository: NotesRepository,
+    private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
 ) {
 
 
     suspend fun execute(): Flow<NotesEvent> {
         return channelFlow {
-            withContext(Dispatchers.IO) {
+            withContext(ioDispatcher) {
                 launch {
                     repository.newNoteInsertionListener.collect { newNote ->
                         send(NotesEvent.Insert(newNote))
