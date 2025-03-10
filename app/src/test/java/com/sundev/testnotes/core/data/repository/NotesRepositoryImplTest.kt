@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalCoroutinesApi::class)
+
 package com.sundev.testnotes.core.data.repository
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
@@ -5,6 +7,10 @@ import com.google.common.truth.Truth
 import com.sundev.testnotes.core.data.local.FakeNotesDao
 import com.sundev.testnotes.core.data.local.NoteEntity
 import com.sundev.testnotes.core.data.local.toModel
+import com.sundev.testnotes.core.domain.models.NoteModel
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Rule
@@ -161,6 +167,86 @@ class NotesRepositoryImplTest{
 
         // Then - expecting one item
         Truth.assertThat(result).isEqualTo(null)
+    }
+
+    @Test
+    fun newNoteInsertionListener_return2newInsertedItems() = runTest {
+        // Given - listen the new insertion listener
+        val items = mutableListOf<NoteModel>()
+        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
+            repository.newNoteInsertionListener.collect{
+                items.add(it)
+            }
+        }
+
+        // when - insert 2 items
+        val note1Model = note1.toModel()
+        val note1Id = repository.insert(note1Model)
+        val updateNote1Model = note1Model.copy(
+            id = note1Id
+        )
+
+        val note2Model = note3.toModel()
+        val note2Id = repository.insert(note2Model)
+        val updateNote2Model = note1Model.copy(
+            id = note2Id
+        )
+
+        // Then - expected 2 new inserted items
+        Truth.assertThat(items[0]).isEqualTo(note1Model)
+        Truth.assertThat(items[1]).isEqualTo(note2Model)
+        Truth.assertThat(items.size).isEqualTo(2)
+
+    }
+
+    @Test
+    fun updateNoteListener_return2UpdatedItems() = runTest {
+        //Given - listen update note listener
+        val items = mutableListOf<NoteModel>()
+        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
+            repository.updateNoteListener.collect {
+                items.add(it)
+            }
+        }
+
+        // When - update 2 items
+        val note1Model = note1.toModel().copy(
+            title = "Title 1 Updated"
+        )
+        repository.update(note1Model)
+
+        val note2Model = note2.toModel().copy(
+            title = "Title 2 updated"
+        )
+        repository.update(note2Model)
+
+        // Then - expected 2 updated items
+        Truth.assertThat(items[0]).isEqualTo(note1Model)
+        Truth.assertThat(items[1]).isEqualTo(note2Model)
+        Truth.assertThat(items.size).isEqualTo(2)
+    }
+
+    @Test
+    fun deleteNoteListener_return2DeletedNoteIds() = runTest {
+        //Given - listen update note listener
+        val ids = mutableListOf<Int>()
+        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
+            repository.deleteNoteListener.collect {
+                ids.add(it)
+            }
+        }
+
+        // When - update 2 items
+        val note1Model = note1.toModel()
+        repository.delete(note1Model.id)
+
+        val note2Model = note2.toModel()
+        repository.delete(note2Model.id)
+
+        // Then - expected 2 updated items
+        Truth.assertThat(ids[0]).isEqualTo(note1Model.id)
+        Truth.assertThat(ids[1]).isEqualTo(note2Model.id)
+        Truth.assertThat(ids.size).isEqualTo(2)
     }
 
 
