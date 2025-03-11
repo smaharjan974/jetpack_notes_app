@@ -6,8 +6,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.sundev.testnotes.Routes
 import com.sundev.testnotes.feature_home.domain.GetNotesUseCase
-import com.sundev.testnotes.feature_home.domain.ListenNotesUseCases
-import com.sundev.testnotes.feature_home.domain.NotesEvent
+import com.sundev.testnotes.core.domain.ListenNotesUseCases
+import com.sundev.testnotes.core.domain.NotesEvent
 import com.sundev.testnotes.core.domain.models.NoteModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers

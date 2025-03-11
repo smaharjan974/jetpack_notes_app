@@ -1,4 +1,4 @@
-package com.sundev.testnotes.feature_home.domain
+package com.sundev.testnotes.core.domain
 
 import com.sundev.testnotes.core.domain.models.NoteModel
 import com.sundev.testnotes.core.domain.repository.NotesRepository
