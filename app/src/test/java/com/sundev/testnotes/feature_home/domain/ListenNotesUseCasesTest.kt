@@ -6,8 +6,6 @@ import com.sundev.testnotes.core.data.local.FakeNotesDao
 import com.sundev.testnotes.core.data.local.NoteEntity
 import com.sundev.testnotes.core.data.local.toModel
 import com.sundev.testnotes.core.data.repository.NotesRepositoryImpl
-import com.sundev.testnotes.core.domain.ListenNotesUseCases
-import com.sundev.testnotes.core.domain.NotesEvent
 import com.sundev.testnotes.core.domain.models.NoteModel
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.StandardTestDispatcher
