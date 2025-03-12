@@ -5,11 +5,14 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.sundev.testnotes.Routes
+import com.sundev.testnotes.core.di.IoDispatcher
+import com.sundev.testnotes.core.di.MainDispatcher
 import com.sundev.testnotes.feature_home.domain.GetNotesUseCase
 import com.sundev.testnotes.core.domain.ListenNotesUseCases
 import com.sundev.testnotes.core.domain.NotesEvent
 import com.sundev.testnotes.core.domain.models.NoteModel
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -21,7 +24,9 @@ import javax.inject.Inject
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     private val getNotesUseCase: GetNotesUseCase,
-    private val listenNotesUseCases: ListenNotesUseCases
+    private val listenNotesUseCases: ListenNotesUseCases,
+    @IoDispatcher private val ioDispatcher: CoroutineDispatcher,
+    @MainDispatcher private val mainDispatcher: CoroutineDispatcher
 ) : ViewModel() {
 
     private val TAG = "HomeViewModel"
@@ -34,13 +39,9 @@ class HomeViewModel @Inject constructor(
     private val _scope = viewModelScope
 
     init {
-        _scope.launch(Dispatchers.IO) {
-            delay(1000L)
-            val items = getNotesUseCase.execute()
-            noteList.addAll(items)
-        }
+        getNotes()
 
-        _scope.launch(Dispatchers.IO) {
+        _scope.launch(ioDispatcher) {
             listenNotesUseCases.execute().collect { event ->
                 when (event) {
                     is NotesEvent.Delete -> {
@@ -61,6 +62,14 @@ class HomeViewModel @Inject constructor(
         }
     }
 
+    private fun getNotes() {
+        _scope.launch(ioDispatcher) {
+            delay(1000L)
+            val items = getNotesUseCase.execute()
+            noteList.addAll(items)
+        }
+    }
+
     fun action(action: HomeAction) {
         when (action) {
             HomeAction.AddNewNote -> addNewNote()
@@ -73,8 +82,7 @@ class HomeViewModel @Inject constructor(
         _eventFlow.emit(HomeEvent.NavigateNext(route))
     }
 
-    private fun listItemOnClick(id: Int) = _scope.launch(Dispatchers.Main) {
-        Log.d(TAG, "listItemOnClick: $id")
+    private fun listItemOnClick(id: Int) = _scope.launch(mainDispatcher) {
         val route = Routes.ADD_NOTE + "/$id"
         _eventFlow.emit(HomeEvent.NavigateNext(route))
     }
